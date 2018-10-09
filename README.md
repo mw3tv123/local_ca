@@ -11,3 +11,6 @@
 - (6) Generate Server Key (Server Private Key);
 - (7) Using Server Key to generate a Server CSR file;
 - (8) Using Intermediate Certificate to sign Server CSR file;
+
+## How to use:
+- Pass your informations into `.env` then `source .env` (or you can just `source .env` to use default value).
