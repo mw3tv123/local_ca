@@ -30,9 +30,9 @@ cp ~/local_ca/openssl.cnf $ROOT_DIR/openssl.cnf
 expect << END
   spawn openssl genrsa -aes256 -out private/ca.key.pem 4096
   expect "*ca.key.pem:*"
-  send "$ROOT_CA_PASSWORD\r"
+  send "${ROOT_CA_PASSWORD}\r"
   expect "*ca.key.pem:*"
-  send "$ROOT_CA_PASSWORD\r"
+  send "${ROOT_CA_PASSWORD}\r"
   expect ""
   send "\r"
 END
