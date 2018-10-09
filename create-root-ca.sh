@@ -4,12 +4,18 @@
 #### Date: 09/10/2018
 #### Descriptions: This script uses to create Root CA.
 
-# Check if Root directory exists or not
-if [ ! -e $ROOT_DIR ]; then
-  mkdir $ROOT_DIR
+# Install 'expect' command
+which expect | grep 'expect' &> /dev/null
+if [ $? -ne 0 ]; then
+  apt-get install expect
 fi
 
-cd $ROOT_DIR
+# Check if Root directory exists or not
+if [ -e $ROOT_DIR ]; then
+  rm -r $ROOT_DIR
+fi
+
+mkdir $ROOT_DIR && cd $ROOT_DIR
 
 # Prepare the Root directory
 mkdir certs crl newcerts private
@@ -18,7 +24,7 @@ touch index.txt
 echo 1000 > serial
 
 # Copy and modify OpenSSL's configuration file
-cp ~/local_ca/root-config.txt $ROOT_DIR/openssl.cnf
+cp ~/local_ca/openssl.cnf $ROOT_DIR/openssl.cnf
 
 # Create the Root key using expect
 expect << END
