@@ -15,7 +15,7 @@ if [ -e $ROOT_CA_DIR ]; then
   rm -r $ROOT_CA_DIR
 fi
 
-mkdir $ROOT_CA_DIR && cd $ROOT_CA_DIR
+mkdir -p $ROOT_CA_DIR && cd $ROOT_CA_DIR
 
 # Prepare the Root directory
 mkdir certs crl newcerts private
@@ -24,17 +24,16 @@ touch index.txt
 echo 1000 > serial
 
 # Copy and modify OpenSSL's configuration file
-cp ~/local_ca/openssl.cnf $ROOT_CA_DIR/openssl.cnf
+cp ~/local_ca/root-config.txt $ROOT_CA_DIR/openssl.cnf
 
 # Create the Root key using expect
 expect << END
   spawn openssl genrsa -aes256 -out private/ca.key.pem 4096
-  expect "*ca.key.pem:*"
-  send "$ROOT_CA_PASSWORD\r"
   expect "*ca.key.pem:"
   send "$ROOT_CA_PASSWORD\r"
-  expect ""
-  send "\r"
+  expect "Verifying*"
+  send "$ROOT_CA_PASSWORD\r"
+  expect "#"
 END
 
 # Change permission of the key for root only
@@ -45,7 +44,7 @@ expect << END
   spawn openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
   expect "*ca.key.pem:*"
   send "$ROOT_CA_PASSWORD\r"
-  expect "*[XX]*"
+  expect "*[GB]:"
   send "$COUNTRY\r"
   expect "*Province*"
   send "$PROVINCE\r"
@@ -57,8 +56,7 @@ expect << END
   send "$ORGANIZATION_UNIT\r"
   expect "Common Name*"
   send "$COMMON_NAME\r"
-  expect "*"
-  send "\r"
+  expect "#"
 END
 
 # Change permission of the root certificate to Read only
