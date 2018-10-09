@@ -7,7 +7,7 @@
 # Install 'expect' command
 which expect | grep 'expect' &> /dev/null
 if [ $? -ne 0 ]; then
-  apt-get install expect
+  apt-get install -y expect
 fi
 
 # Check if Root directory exists or not
@@ -34,7 +34,7 @@ expect << END
   expect "*ca.key.pem:*"
   send "$ROOT_CA_PASSWORD\r"
   expect ""
-  spawn "\r"
+  send "\r"
 END
 
 # Change permission of the key for root only
