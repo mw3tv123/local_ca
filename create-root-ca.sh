@@ -11,11 +11,11 @@ if [ $? -ne 0 ]; then
 fi
 
 # Check if Root directory exists or not
-if [ -e $ROOT_DIR ]; then
-  rm -r $ROOT_DIR
+if [ -e $ROOT_CA_DIR ]; then
+  rm -r $ROOT_CA_DIR
 fi
 
-mkdir $ROOT_DIR && cd $ROOT_DIR
+mkdir $ROOT_CA_DIR && cd $ROOT_CA_DIR
 
 # Prepare the Root directory
 mkdir certs crl newcerts private
@@ -24,15 +24,15 @@ touch index.txt
 echo 1000 > serial
 
 # Copy and modify OpenSSL's configuration file
-cp ~/local_ca/openssl.cnf $ROOT_DIR/openssl.cnf
+cp ~/local_ca/openssl.cnf $ROOT_CA_DIR/openssl.cnf
 
 # Create the Root key using expect
 expect << END
   spawn openssl genrsa -aes256 -out private/ca.key.pem 4096
   expect "*ca.key.pem:*"
-  send "${ROOT_CA_PASSWORD}\r"
-  expect "*ca.key.pem:*"
-  send "${ROOT_CA_PASSWORD}\r"
+  send "$ROOT_CA_PASSWORD\r"
+  expect "*ca.key.pem:"
+  send "$ROOT_CA_PASSWORD\r"
   expect ""
   send "\r"
 END
