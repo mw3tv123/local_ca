@@ -9,7 +9,7 @@ source_dir=$(pwd)
 # Install 'expect' command
 which expect | grep 'expect' &> /dev/null
 if [ $? -ne 0 ]; then
-  apt-get install -y expect
+  apt install -y expect
 fi
 
 # Check if Root directory exists or not
@@ -26,7 +26,7 @@ touch index.txt
 echo 1000 > serial
 
 # Copy and modify OpenSSL's configuration file
-cp $(source_dir)/root-config.txt $ROOT_CA_DIR/openssl.cnf
+cp $source_dir/root-config.txt $ROOT_CA_DIR/openssl.cnf
 
 # Create the Root key using expect
 expect << END
@@ -78,3 +78,9 @@ chmod 444 certs/ca.cert.pem
 
 # Verify the root certificate
 openssl x509 -noout -text -in certs/ca.cert.pem
+
+# Inform user after completed the process
+echo "==> Progress generate Root CA was completed!"
+echo "- Root CA directory: $(ROOT_CA_DIR)"
+echo "- Private key: $(ROOT_CA_DIR)/private"
+echo "- Certificate: $(ROOT_CA_DIR)/certs"
