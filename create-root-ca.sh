@@ -4,7 +4,7 @@
 #### Date: 09/10/2018
 #### Descriptions: This script uses to create Root CA.
 
-source .env
+source_dir=$(pwd)
 
 # Install 'expect' command
 which expect | grep 'expect' &> /dev/null
@@ -26,7 +26,7 @@ touch index.txt
 echo 1000 > serial
 
 # Copy and modify OpenSSL's configuration file
-cp ~/local_ca/root-config.txt $ROOT_CA_DIR/openssl.cnf
+cp $(source_dir)/root-config.txt $ROOT_CA_DIR/openssl.cnf
 
 # Create the Root key using expect
 expect << END
