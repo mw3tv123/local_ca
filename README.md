@@ -14,3 +14,4 @@
 
 ## How to use:
 - Pass your informations into `.env` then `source .env` (or you can just `source .env` to use default value).
+- After the Certificate was generated, you will be inform about the location of the Certificate.

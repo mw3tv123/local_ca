@@ -2,7 +2,7 @@
 
 #### Author: HUNG TRAN
 #### Date: 10/10/2018
-#### Descriptions: This script uses to create Intermediate CA for Server.
+#### Descriptions: This script uses to create Intermediate CA.
 
 source_dir=$(pwd)
 

@@ -81,6 +81,6 @@ openssl x509 -noout -text -in certs/ca.cert.pem
 
 # Inform user after completed the process
 echo "==> Progress generate Root CA was completed!"
-echo "- Root CA directory: $(ROOT_CA_DIR)"
-echo "- Private key: $(ROOT_CA_DIR)/private"
-echo "- Certificate: $(ROOT_CA_DIR)/certs"
+echo "- Root CA directory: $ROOT_CA_DIR"
+echo "- Private key: $ROOT_CA_DIR/private"
+echo "- Certificate: $ROOT_CA_DIR/certs"
