@@ -46,7 +46,7 @@ chmod 400 private/ca.key.pem
 # Create the Root Certificate
 expect << END
   spawn openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
-  expect "*ca.key.pem:"
+  expect "Enter pass phrase for*"
   sleep 2
   send "$ROOT_CA_PASSWORD\r"
   expect "Country Name*"
@@ -66,7 +66,7 @@ expect << END
   send "$ORGANIZATION_UNIT\r"
   expect "Common Name*"
   sleep 2
-  send "$COMMON_NAME\r"
+  send "$ROOT_COMMON_NAME\r"
   expect "Email Address*"
   sleep 2
   send "\r"
