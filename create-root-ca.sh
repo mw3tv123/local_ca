@@ -4,6 +4,8 @@
 #### Date: 09/10/2018
 #### Descriptions: This script uses to create Root CA.
 
+source .env
+
 # Install 'expect' command
 which expect | grep 'expect' &> /dev/null
 if [ $? -ne 0 ]; then
@@ -29,9 +31,11 @@ cp ~/local_ca/root-config.txt $ROOT_CA_DIR/openssl.cnf
 # Create the Root key using expect
 expect << END
   spawn openssl genrsa -aes256 -out private/ca.key.pem 4096
-  expect "*ca.key.pem:"
+  expect "Enter pass phrase for*"
+  sleep 2
   send "$ROOT_CA_PASSWORD\r"
-  expect "Verifying*"
+  expect "Verifying - Enter pass phrase for*"
+  sleep 2
   send "$ROOT_CA_PASSWORD\r"
   expect "#"
 END
@@ -42,20 +46,30 @@ chmod 400 private/ca.key.pem
 # Create the Root Certificate
 expect << END
   spawn openssl req -config openssl.cnf -key private/ca.key.pem -new -x509 -days 7300 -sha256 -extensions v3_ca -out certs/ca.cert.pem
-  expect "*ca.key.pem:*"
+  expect "*ca.key.pem:"
+  sleep 2
   send "$ROOT_CA_PASSWORD\r"
-  expect "*[GB]:"
+  expect "Country Name*"
+  sleep 2
   send "$COUNTRY\r"
-  expect "*Province*"
+  expect "*Province Name*"
+  sleep 2
   send "$PROVINCE\r"
-  expect "Locality*"
+  expect "Locality Name*"
+  sleep 2
   send "\r"
   expect "Organization Name*"
+  sleep 2
   send "$ORGANIZATION\r"
   expect "Organization Unit Name*"
+  sleep 2
   send "$ORGANIZATION_UNIT\r"
   expect "Common Name*"
+  sleep 2
   send "$COMMON_NAME\r"
+  expect "Email Address*"
+  sleep 2
+  send "\r"
   expect "#"
 END
 
