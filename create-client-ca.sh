@@ -13,14 +13,18 @@ fi
 cd $ROOT_CA_DIR
 
 # Create the Intermediate key using expect
-openssl genrsa -out intermediate/private/sv2.abc.key.pem 2048
+openssl genrsa -out intermediate/private/$SERVER_NAME.key.pem 2048
 
 # Change permission of the key for root only
-chmod 400 intermediate/private/sv2.abc.key.pem
+chmod 400 intermediate/private/$SERVER_NAME.key.pem
 
 # Create the Server Certificate Signing Request - CSR file
+if [ -e $SERVER_NAME.csr.pem ]; then
+  rm $SERVER_NAME.csr.pem
+fi
+
 expect << END
-  spawn openssl req -config intermediate/openssl.cnf -new -sha256 -key intermediate/private/sv2.abc.key.pem -out intermediate/csr/sv2.abc.csr.pem
+  spawn openssl req -config intermediate/openssl.cnf -new -sha256 -key intermediate/private/$SERVER_NAME.key.pem -out intermediate/csr/$SERVER_NAME.csr.pem
   expect "Country Name*"
   sleep 2
   send "US\r"
@@ -38,7 +42,7 @@ expect << END
   send "Local Ltd Web Services\r"
   expect "Common Name*"
   sleep 2
-  send "sv2.abc\r"
+  send "$SERVER_NAME\r"
   expect "Email Address*"
   sleep 2
   send "\r"
@@ -46,10 +50,17 @@ expect << END
 END
 
 # Using Intermediate CA to sign for Server CSR file to create Server Certificate
+if [ -e $SERVER_NAME.cert.pem]; then
+  rm $SERVER_NAME.cert.pem
+fi
+
 expect << END
-  spawn openssl ca -config intermediate/openssl.cnf -extensions server_cert -days 375 -notext -md sha256 -in intermediate/csr/sv2.abc.csr.pem -out intermediate/certs/sv2.abc.cert.pem
-  expect "Sign the  certificate?*"
+  spawn openssl ca -config intermediate/openssl.cnf -extensions server_cert -days 375 -notext -md sha256 -in intermediate/csr/$SERVER_NAME.csr.pem -out intermediate/certs/$SERVER_NAME.cert.pem
+  expect "Enter pass phrase for*"
   sleep 2
+  send "$INTERMEDIATE_CA_PASSWORD\r"
+  expect "Sign the  certificate?*"
+  sleep 5
   send "y\r"
   expect "*commit?*"
   sleep 2
@@ -58,13 +69,13 @@ expect << END
 END
 
 # Change permission of the root certificate to Read only
-chmod 444 intermediate/certs/sv2.abc.cert.pem
+chmod 444 intermediate/certs/$SERVER_NAME.cert.pem
 
 # Verify the root certificate
-openssl x509 -noout -text -in intermediate/certs/sv2.abc.cert.pem
+openssl x509 -noout -text -in intermediate/certs/$SERVER_NAME.cert.pem
 
 # Create the certificate chain file
-cat intermediate/certs/sv2.abc.cert.pem intermediate/certs/intermediate.cert.pem certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
+cat intermediate/certs/$SERVER_NAME.cert.pem intermediate/certs/intermediate.cert.pem certs/ca.cert.pem > intermediate/certs/ca-chain.cert.pem
 
 # Inform user after completed the process
 echo "==> Progress generate Server CA was completed!"
